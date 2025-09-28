@@ -1,16 +1,29 @@
 ---
+import { getCollection } from 'astro:content'
+import { siteConfig } from '../config/site-config'
+import MainLayout from '../layouts/MainLayout.astro'
+import TypedBlogPost from 'src/components/TypedBlogPost.astro'
+
+const blogPost = await getCollection('blog', (post) => post.data.isDraft === false)
 
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout title="Home Page">
+	<section class="bg-white dark:bg-gray-900">
+		<div class="container mx-auto px-6 py-10 ">
+			<h1 class="text-3xl font-semibold text-gray-800 capitalize lg:text-4xl dark:text-white mb-5">
+				{siteConfig.title}
+			</h1>
+
+			<a class="border border-white px-3 py-2 hover:bg-gray-500 cursor-pointer rounded-sm" href="/blog/1"> Blog paginado</a>
+			<a class="border border-white px-3 py-2 hover:bg-gray-500 cursor-pointer rounded-sm" href="/authors">Autores</a>
+			<div class="mt-8 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-2">
+
+
+                {
+                    blogPost.map ((post) => <TypedBlogPost  post={post} />)
+                }
+			</div>
+		</div>
+	</section>
+</MainLayout>

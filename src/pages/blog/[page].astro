@@ -1,0 +1,46 @@
+---
+import type { GetStaticPaths } from 'astro'
+// Type GetStaticPaths de Astro
+import TypedBlogPost from 'src/components/TypedBlogPost.astro'
+import MainLayout from '../../layouts/MainLayout.astro'
+import { getCollection } from 'astro:content'
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const blogPosts = await getCollection('blog')
+	return paginate(blogPosts, { pageSize: 2 })
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props
+---
+
+<MainLayout>
+	<div class="mx-auto py-10">
+		<h1 class="text-3xl font-semibold text-white capitalize lg:text-4xl">Dalton Blog paginado</h1>
+	</div>
+
+	<section class="bg-gray-900" aria-label="Entradas de blog">
+		<div class="mt-8 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-2">
+			{page.data.map((post) => <TypedBlogPost post={post} />)}
+		</div>
+	</section>
+
+	<section aria-label="Controles" class="mt-10 flex justify-between">
+		<!--   page .. ?? prev   -->
+		<a
+			class:list={[
+				`cursor-pointer rounded bg-blue-500 p-2 text-white hover:bg-blue-600`,
+				{ 'bg-gray-600 hover:bg-gray-600': !page.url.prev }
+			]}
+			href={page.url.prev}>Anteriores</a
+		>
+
+		<!--   page .. ?? next   -->
+		<a
+			class:list={[
+				`cursor-pointer rounded bg-blue-500 p-2 text-white hover:bg-blue-600`,
+				{ 'bg-gray-600 hover:bg-gray-600': !page.url.next }
+			]}
+			href={page.url.next}>Siguientes</a
+		>
+	</section>
+</MainLayout>
